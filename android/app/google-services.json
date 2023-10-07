@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "260519733495",
+    "project_id": "depoto2-76517",
+    "storage_bucket": "depoto2-76517.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:260519733495:android:c1985c5a739ff7f8a74bf2",
+        "android_client_info": {
+          "package_name": "com.example.DePOTO2.depoto"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDP5d7mALvDNl-aSAkrgZc979R8GKxuRWk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
