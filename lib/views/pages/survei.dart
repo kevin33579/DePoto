@@ -11,18 +11,24 @@ class _SurveiState extends State<Survei> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       appBar: AppBar(
-        title: Text('Main Form'),
+        title: Text('SURVEI',
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 35
+        ),),
         leading: IconButton(
           icon: Icon(
             Icons.home,
-            color: Colors.black,
+            color: Colors.white,
+            size: 35,
           ),
           onPressed: () {
             Navigator.pushReplacementNamed(context, MainMenu.routeName);
           },
         ),
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.black,
         centerTitle: true,
       ),
       body: SafeArea(
@@ -35,19 +41,21 @@ class _SurveiState extends State<Survei> {
                   padding: EdgeInsets.all(8.0),
                   child: TextButton(
                     style: TextButton.styleFrom(
-                      textStyle: const TextStyle(fontSize: 20),
+                      textStyle: const TextStyle(fontSize: 35),
                       backgroundColor: Colors.blue,
+                      fixedSize: Size(400, 100),
                       padding: EdgeInsets.only(
                           left: 40.0, right: 40.0, top: 15.0, bottom: 15.0),
                     ),
                     onPressed: () {
-                      Navigator.pushReplacementNamed(
+                      Navigator.pushNamed(
                           context, ContainerDetails.routeName);
                     },
                     child: const Text(
-                      'New',
+                      'NEW',
                       style: TextStyle(
-                        color: Colors.black,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
@@ -56,7 +64,8 @@ class _SurveiState extends State<Survei> {
                   padding: EdgeInsets.all(8.0),
                   child: TextButton(
                       style: TextButton.styleFrom(
-                        textStyle: const TextStyle(fontSize: 20),
+                        textStyle: const TextStyle(fontSize: 35),
+                        fixedSize: Size(400, 100),
                         backgroundColor: Colors.blue,
                         padding: EdgeInsets.only(
                             left: 40.0, right: 40.0, top: 15.0, bottom: 15.0),
@@ -65,9 +74,11 @@ class _SurveiState extends State<Survei> {
                         Navigator.pushNamed(context, SurveiList.routeName);
                       },
                       child: const Text(
-                        'List',
+                        'LIST',
                         style: TextStyle(
-                          color: Colors.black,
+                          color: Colors.white,
+                          fontSize: 35,
+                          fontWeight: FontWeight.bold
                         ),
                       )),
                 ),

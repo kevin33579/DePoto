@@ -20,6 +20,7 @@ class _ContainerDetailsState extends State<ContainerDetails> {
   bool isDMG = false;
   bool showTextField = false;
   String? selectedPrefix;
+  List<bool> isSelected = [true, false];
 
   final List<String> dropdownItems = [
     'Manual',
@@ -41,13 +42,21 @@ class _ContainerDetailsState extends State<ContainerDetails> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       appBar: AppBar(
-        title: Text('Container Details'),
+        title: Text('Container Details',
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 25,
+          fontWeight: FontWeight.bold,
+        ),),
         centerTitle: true,
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.black,
         leading: BackButton(onPressed: () {
-          Navigator.pushReplacementNamed(context, MainMenu.routeName);
-        }),
+          Navigator.pop(context);
+        },
+          color: Colors.white,
+        ),
         actions: <Widget>[
           Padding(
               padding: EdgeInsets.only(right: 10.0),
@@ -78,8 +87,8 @@ class _ContainerDetailsState extends State<ContainerDetails> {
                     'Prefix',
                     textAlign: TextAlign.left,
                     style: TextStyle(
-                      fontSize: 25,
-                      color: Colors.black,
+                      fontSize: 35,
+                      color: Colors.white,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -93,7 +102,7 @@ class _ContainerDetailsState extends State<ContainerDetails> {
                         style: TextStyle(
                           fontWeight: FontWeight.normal,
                           color: Colors.grey,
-                          fontSize: 25,
+                          fontSize: 35,
                         ),
                       ),
                       value: selectedDropdownValue,
@@ -101,7 +110,12 @@ class _ContainerDetailsState extends State<ContainerDetails> {
                       items: dropdownItems.map((item) {
                         return DropdownMenuItem<String>(
                           value: item,
-                          child: Text(item),
+                          child: Text(item,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 35,
+                            fontWeight: FontWeight.bold
+                          ),),
                         );
                       }).toList(),
                       onChanged: (value) {
@@ -109,7 +123,10 @@ class _ContainerDetailsState extends State<ContainerDetails> {
                           selectedDropdownValue = value;
                         });
                       },
-                    )),
+                      dropdownColor: Colors.black,
+                      iconSize: 50,
+                    )
+                ),
               ],
             ),
             if (selectedDropdownValue == 'Manual')
@@ -119,20 +136,30 @@ class _ContainerDetailsState extends State<ContainerDetails> {
                   Padding(
                     padding: EdgeInsets.all(10.0),
                     child: Text(
-                      'Insert Prefix',
+                      'Prefix',
                       style: TextStyle(
-                        fontSize: 25,
+                        fontSize: 35,
                         fontWeight: FontWeight.bold,
-                        color: Colors.black,
+                        color: Colors.white,
                       ),
                     ),
+                  ),
+                  SizedBox(
+                    width: 70.0, // Adjust the width as needed
+                    height: 10.0, // Adjust the height as needed
                   ),
                   Expanded(
                     child: Padding(
                       padding: EdgeInsets.all(10.0),
                       child: TextFormField(
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 35,
+                          fontWeight: FontWeight.bold
+                        ),
                         maxLength: 4,
                         textAlign: TextAlign.right,
+                        cursorColor: Colors.white,
                         onChanged: (value) {
                           manualTextControler.value = TextEditingValue(
                               text: value.toUpperCase(),
@@ -165,11 +192,15 @@ class _ContainerDetailsState extends State<ContainerDetails> {
                   child: Text(
                     'Number',
                     style: TextStyle(
-                      fontSize: 25,
+                      fontSize: 35,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black,
+                      color: Colors.white,
                     ),
                   ),
+                ),
+                SizedBox(
+                  width: 40.0, // Adjust the width as needed
+                  height: 10.0, // Adjust the height as needed
                 ),
                 Expanded(
                   child: Padding(
@@ -179,6 +210,11 @@ class _ContainerDetailsState extends State<ContainerDetails> {
                       textAlign: TextAlign.right,
                       keyboardType: TextInputType.number,
                       controller: textControler,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 35,
+                        fontWeight: FontWeight.bold
+                      ),
                       validator: (text) {
                         if (text == null || text.isEmpty) {
                           return 'can\'t be empty';
@@ -199,24 +235,123 @@ class _ContainerDetailsState extends State<ContainerDetails> {
               children: <Widget>[
                 Padding(
                   padding: EdgeInsets.all(10),
-                  child: Text(
-                    'Damage: $isDMG',
-                    // Display the current state of the toggle button
-                    style: TextStyle(fontSize: 25.0),
-                  ),
-                ),
-                Spacer(),
-                Padding(
-                  padding: EdgeInsets.all(10),
-                  child: Switch(
-                    value: isDMG,
-                    onChanged: (value) {
+                  child: ToggleButtons(
+                    children: <Widget>[
+                      Padding(padding: EdgeInsets.all(5),
+                      child: Text("AV",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 35,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      ),
+                      Padding(padding: EdgeInsets.all(5),
+                        child: Text("DMG",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 35,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                    isSelected: isSelected,
+                    selectedColor: isSelected[0] ? Colors.green : Colors.red,
+                    selectedBorderColor: isSelected[0] ? Colors.green : Colors.red,
+                    borderColor: isSelected[0] ? Colors.green : Colors.red,
+                    fillColor: isSelected[0] ? Colors.green : Colors.red,
+                    onPressed: (int index) {
                       setState(() {
-                        isDMG = value; // Update the state of the toggle button
+                        for (int buttonIndex = 0; buttonIndex < isSelected.length; buttonIndex++) {
+                          if (buttonIndex == index) {
+                            isSelected[buttonIndex] = true;
+                            isDMG = true;
+                          } else {
+                            isSelected[buttonIndex] = false;
+                            isDMG = false;
+                          }
+                        }
                       });
                     },
                   ),
+                  // Transform.scale(
+                  //   scale: 1.5,
+                  //   child: Switch(
+                  //     value: isDMG,
+                  //     onChanged: (value) {
+                  //       setState(() {
+                  //         isDMG = value; // Update the state of the toggle button
+                  //       });
+                  //     },
+                  //     activeColor: Colors.red,
+                  //     inactiveTrackColor: Colors.greenAccent,
+                  //     inactiveThumbColor: Colors.green,
+                  //
+                  //
+                  //   ),
+                  // ),
                 ),
+                // GestureDetector(
+                //   onTap: () {
+                //     setState(() {
+                //       isDMG = !isDMG;
+                //     });
+                //   },
+                //   child: Container(
+                //     // width: Size.width * 0.35,
+                //     decoration: BoxDecoration(
+                //         borderRadius: BorderRadius.circular(30),
+                //         color: Colors.green),
+                //     child: Padding(
+                //       padding: const EdgeInsets.all(8.0),
+                //       child: Row(
+                //         mainAxisAlignment:
+                //         MainAxisAlignment.spaceBetween,
+                //         children: [
+                //           Container(
+                //             width: 60,
+                //             height: 30,
+                //             decoration: BoxDecoration(
+                //                 borderRadius:
+                //                 BorderRadius.circular(30),
+                //                 color: val
+                //                     ? Colors.white
+                //                     : kSecondaryColor),
+                //             child: Center(
+                //                 child: Text(
+                //                   'BUY',
+                //                   style: TextStyle(
+                //                       fontWeight: FontWeight.bold,
+                //                       color: val
+                //                           ? Colors.black
+                //                           : Colors.white),
+                //                 )),
+                //           ),
+                //           Container(
+                //             width: 60,
+                //             height: 30,
+                //             decoration: BoxDecoration(
+                //                 borderRadius:
+                //                 BorderRadius.circular(30),
+                //                 color: val
+                //                     ? kSecondaryColor
+                //                     : Colors.white),
+                //             child: Center(
+                //                 child: Text(
+                //                   'SELL',
+                //                   style: TextStyle(
+                //                       fontWeight: FontWeight.bold,
+                //                       color: val
+                //                           ? Colors.white
+                //                           : Colors.black),
+                //                 )),
+                //           ),
+                //         ],
+                //       ),
+                //     ),
+                //   ),
+                // ),
               ],
             ),
 

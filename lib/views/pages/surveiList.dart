@@ -10,7 +10,6 @@ class SurveiList extends StatefulWidget {
 class _SurveiListState extends State<SurveiList> {
   DateTime selectedDate = DateTime.now();
 
-
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -26,29 +25,27 @@ class _SurveiListState extends State<SurveiList> {
 
   @override
   Widget build(BuildContext context) {
-    String date = '${selectedDate.year}/${selectedDate.month.toString().padLeft(2, '0')}/${selectedDate.day.toString().padLeft(2, '0')}';
+    String date =
+        '${selectedDate.year}/${selectedDate.month.toString().padLeft(2, '0')}/${selectedDate.day.toString().padLeft(2, '0')}';
     return Scaffold(
+        backgroundColor: Colors.black,
         appBar: AppBar(
           title: Text(
             'Enter Date',
             style: TextStyle(
-              fontSize: 20,
-              color: Colors.black,
+              fontSize: 35,
+              color: Colors.white,
             ),
           ),
-          backgroundColor: Colors.blue,
+          backgroundColor: Colors.black,
           centerTitle: true,
-          actions: [
-            IconButton(
-              onPressed: () {
-                Navigator.push(context,
-                MaterialPageRoute(builder: (context) => CardView(date: date)));
-              },
-              icon: Icon(Icons.check),
-              color: Colors.black,
-              iconSize: 30,
-            )
-          ],
+          leading: BackButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            color: Colors.white,
+            style: IconButton.styleFrom(iconSize: 35),
+          ),
         ),
         body: Center(
           child: Padding(
@@ -58,9 +55,12 @@ class _SurveiListState extends State<SurveiList> {
               children: [
                 Text(
                   "Enter Date: ",
-                  style: TextStyle(fontSize: 30),
+                  style: TextStyle(
+                      fontSize: 35,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold),
                 ),
-                SizedBox(height: 10.0),
+                SizedBox(height: 15.0),
                 GestureDetector(
                   onTap: () => _selectDate(context),
                   child: Container(
@@ -68,11 +68,36 @@ class _SurveiListState extends State<SurveiList> {
                     decoration: BoxDecoration(
                       border: Border.all(),
                       borderRadius: BorderRadius.circular(5.0),
+                      color: Colors.grey
                     ),
                     child: Text(
                       date,
-                      style: TextStyle(fontSize: 18.0),
+                      style: TextStyle(
+                        fontSize: 35.0,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white
+                      ),
                     ),
+                  ),
+                ),
+                SizedBox(height: 25.0),
+                TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => CardView(date: date)));
+                  },
+                  child: Text(
+                    "Proses",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 35),
+                  ),
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(Colors.blue),
+                    fixedSize: MaterialStateProperty.all(Size(500, 70)),
                   ),
                 ),
               ],

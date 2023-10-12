@@ -23,16 +23,19 @@ class _CameraViewState extends State<CameraView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       appBar: AppBar(
         title: Text(
           "Image Preview",
           style: TextStyle(
             color: Colors.white,
+            fontSize: 30,
           ),
         ),
         automaticallyImplyLeading: true,
         centerTitle: true,
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.black,
+        foregroundColor: Colors.white,
       ),
       body: ListView.builder(
         itemCount: widget.imagesUrl.length,

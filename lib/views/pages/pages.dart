@@ -30,3 +30,5 @@ part 'cardView/details.dart';
 part 'cardView/cardView.dart';
 
 part '../pages/cardView/changeDetailView.dart';
+part 'splash.dart';
+part 'cameraChangeDetails.dart';

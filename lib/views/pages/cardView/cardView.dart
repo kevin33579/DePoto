@@ -15,15 +15,25 @@ class _CardViewState extends State<CardView> {
   Widget build(BuildContext context) {
     final userStream = FirebaseFirestore.instance.collection('DKM/IN/${widget.date}').snapshots();
     return Scaffold(
+      backgroundColor: Colors.black,
       appBar: AppBar(
         title: Text(
             widget.date,
           style: TextStyle(
-            fontSize: 20
+            fontSize: 30,
+            color: Colors.white,
           ),
         ),
         centerTitle: true,
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.black,
+        leading: BackButton(
+          onPressed: (){
+            Navigator.pop(context);
+          },
+          style: ButtonStyle(
+            foregroundColor: MaterialStateProperty.all(Colors.white),
+          ),
+        ),
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: userStream,
@@ -55,7 +65,13 @@ class _CardViewState extends State<CardView> {
                 padding: EdgeInsets.all(20),
                 child: ListTile(
                   title: Text(
-                    folderName!,),
+                    folderName!,
+                    style: TextStyle(
+                      fontSize: 30,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700
+                    ),
+                  ),
                   onTap: (){
                     Navigator.push(context,
                         MaterialPageRoute(builder: (context) => Details(folderPath: document!.reference.path)));

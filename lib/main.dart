@@ -32,7 +32,8 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/',
       routes: {
-        '/': (context) => MainMenu(),
+        '/': (context) => Splash(),
+        Splash.routeName: (context) => Splash(),
         MainMenu.routeName: (context) => MainMenu(),
         ContainerDetails.routeName:(context) => ContainerDetails(),
         Survei.routeName: (context) => Survei(),

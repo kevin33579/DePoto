@@ -11,9 +11,14 @@ class _MainMenuState extends State<MainMenu> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       appBar: AppBar(
-        title: Text('Main Menu'),
-        backgroundColor: Colors.blue,
+        title: Text('Main Menu',
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 35
+        ),),
+        backgroundColor: Colors.black,
         centerTitle: true,
         automaticallyImplyLeading: false,
       ),
@@ -27,18 +32,21 @@ class _MainMenuState extends State<MainMenu> {
                   padding: EdgeInsets.all(8.0),
                   child: TextButton(
                     style: TextButton.styleFrom(
-                      textStyle: const TextStyle(fontSize: 20),
+                      fixedSize: Size(400, 100),
+                      textStyle: const TextStyle(fontSize: 35),
                       backgroundColor: Colors.blue,
+                      // shape: ,
                       padding: EdgeInsets.only(
                           left: 40.0, right: 40.0, top: 15.0, bottom: 15.0),
                     ),
                     onPressed: () {
-                      Navigator.pushReplacementNamed(context, Survei.routeName);
+                      Navigator.pushNamed(context, Survei.routeName);
                     },
                     child: const Text(
-                      'Survei',
+                      'SURVEI',
                       style: TextStyle(
-                        color: Colors.black,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
@@ -47,16 +55,18 @@ class _MainMenuState extends State<MainMenu> {
                   padding: EdgeInsets.all(8.0),
                   child: TextButton(
                       style: TextButton.styleFrom(
-                        textStyle: const TextStyle(fontSize: 20),
+                        textStyle: const TextStyle(fontSize: 35),
+                        fixedSize: Size(400, 100),
                         backgroundColor: Colors.blue,
                         padding: EdgeInsets.only(
                             left: 40.0, right: 40.0, top: 15.0, bottom: 15.0),
                       ),
                       onPressed: null,
                       child: const Text(
-                        'Crani',
+                        'CRANI',
                         style: TextStyle(
-                          color: Colors.black,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
                         ),
                       )),
                 ),

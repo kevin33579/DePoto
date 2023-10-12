@@ -4,8 +4,8 @@ class CameraScreen extends StatefulWidget {
   CameraScreen({required this.prefix, required this.numbers,
   required this.images, required this.isDMG});
 
-  final String prefix;
-  final String numbers;
+  String prefix;
+  String numbers;
   final List<String> images;
   bool isDMG;
 
@@ -54,6 +54,33 @@ class _CameraScreenState extends State<CameraScreen> {
     });
   }
 
+  Future<void> _navigateToRenamePrefix() async {
+    final updatedData = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => RenamePrefix(
+          prefix: widget.prefix,
+          numbers: widget.numbers,
+          isDMG: widget.isDMG,
+        ),
+      ),
+    );
+
+
+    if (updatedData != null) {
+      final selectedPrefix = updatedData['prefix'] as String?;
+      final selectedNumber = updatedData['numbers'] as String?;
+      final isDMG = updatedData['isDMG'] as bool;
+
+      if (selectedPrefix != null && selectedNumber != null) {
+        setState(() {
+          widget.prefix = selectedPrefix;
+          widget.numbers = selectedNumber;
+          widget.isDMG = isDMG;
+        });
+      }
+    }
+  }
 
 
   Future<String?> _uploadImageToFirebaseStorage(XFile images, String imageName,
@@ -120,7 +147,11 @@ class _CameraScreenState extends State<CameraScreen> {
         // Jangan biarkan pengguna menutup dialog dengan tap di luar
         builder: (context) {
           return AlertDialog(
-            title: Text('Capturing Image,please dont move . . '),
+            title: Text('Success',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+
+            ),),
             content: Wrap(
               alignment: WrapAlignment.center,
               children: [
@@ -159,25 +190,6 @@ class _CameraScreenState extends State<CameraScreen> {
         Container(
           height: double.infinity,
           child: CameraPreview(_controller!),
-        ),
-
-        //back button
-        Align(
-          alignment: Alignment.topLeft,
-          child: Padding(
-            padding: EdgeInsets.only(left: 10, top: 30),
-            child: IconButton(
-              padding: EdgeInsets.all(20),
-              icon: Icon(Icons.arrow_back),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(Colors.blue),
-                foregroundColor: MaterialStateProperty.all(Colors.white),
-              ),
-            ),
-          ),
         ),
 
 
@@ -244,40 +256,45 @@ class _CameraScreenState extends State<CameraScreen> {
         //Jenis barang
         Align(
           alignment: Alignment.bottomLeft,
-          child: Padding(
-            padding: EdgeInsets.only(bottom: 20, left: 10),
-            child: Container(
-              color: Colors.blue,
-              child: Wrap(
-                alignment: WrapAlignment.center,
-                direction: Axis.vertical,
-                crossAxisAlignment: WrapCrossAlignment.center,
-                spacing: 2,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(top: 7, left: 7, right: 7),
-                    child: Text(
-                      widget.prefix,
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: Colors.white,
+          child: TextButton(
+            onPressed: (){
+              _navigateToRenamePrefix();
+              },
+            child: Padding(
+              padding: EdgeInsets.only(bottom: 20, left: 10),
+              child: Container(
+                color: Colors.blue,
+                child: Wrap(
+                  alignment: WrapAlignment.center,
+                  direction: Axis.vertical,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  spacing: 2,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(top: 7, left: 7, right: 7),
+                      child: Text(
+                        widget.prefix,
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(bottom: 7, left: 7, right: 7),
-                    child: Text(
-                      widget.numbers,
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: Colors.white,
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 7, left: 7, right: 7),
+                      child: Text(
+                        widget.numbers,
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
+          )
         ),
 
         //tombol kamera

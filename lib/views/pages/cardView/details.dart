@@ -42,11 +42,21 @@ class _DetailsState extends State<Details> {
           final images = dynamicImages.map((item) => item.toString()).toList();
 
           return Scaffold(
+            backgroundColor: Colors.black,
             appBar: AppBar(
-              title: Text(folderName),
+              title: Text(folderName,
+              style: TextStyle(
+                fontSize: 30,
+              ),),
               foregroundColor: Colors.white,
-              backgroundColor: Colors.blue,
+              backgroundColor: Colors.black,
               centerTitle: true,
+              leading: BackButton(
+                onPressed: (){
+                  Navigator.pop(context);
+                },
+              ),
+
             ),
             body: Align(
               alignment: Alignment.topCenter,
@@ -54,7 +64,7 @@ class _DetailsState extends State<Details> {
                 child: Column(
                   children: [
                     Padding(
-                      padding: EdgeInsets.all(5),
+                      padding: EdgeInsets.all(15),
                       child: TextButton(
                         onPressed: () {
                           Navigator.push(
@@ -64,11 +74,12 @@ class _DetailsState extends State<Details> {
                                       prefix: prefix,
                                       numbers: number,
                                     isDMG: isDMG,
+
                                   )));
                         },
                         child: Text(
                           'CHANGE DETAIL',
-                          style: TextStyle(fontSize: 22),
+                          style: TextStyle(fontSize: 25),
                         ),
                         style: TextButton.styleFrom(
                             foregroundColor: Colors.white,
@@ -79,7 +90,7 @@ class _DetailsState extends State<Details> {
 
                     //Change Status button
                     Padding(
-                      padding: EdgeInsets.all(5),
+                      padding: EdgeInsets.only(bottom: 15),
                       child: TextButton(
                         onPressed: () {
                           showDialog(
@@ -133,7 +144,7 @@ class _DetailsState extends State<Details> {
                         },
                         child: Text(
                           'CHANGE STATUS',
-                          style: TextStyle(fontSize: 22),
+                          style: TextStyle(fontSize: 25),
                         ),
                         style: TextButton.styleFrom(
                             foregroundColor: Colors.white,
@@ -142,7 +153,7 @@ class _DetailsState extends State<Details> {
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.all(5),
+                      padding: EdgeInsets.only(bottom: 15),
                       child: TextButton(
                         onPressed: () {
                           Navigator.push(
@@ -157,7 +168,7 @@ class _DetailsState extends State<Details> {
                         },
                         child: Text(
                           'ADD PHOTO',
-                          style: TextStyle(fontSize: 22),
+                          style: TextStyle(fontSize: 25),
                         ),
                         style: TextButton.styleFrom(
                             foregroundColor: Colors.white,
@@ -166,7 +177,7 @@ class _DetailsState extends State<Details> {
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.all(5),
+                      padding: EdgeInsets.only(bottom: 15),
                       child: TextButton(
                         onPressed: () {
                           Navigator.push(
@@ -180,7 +191,7 @@ class _DetailsState extends State<Details> {
                         },
                         child: Text(
                           'PHOTO REVIEW',
-                          style: TextStyle(fontSize: 22),
+                          style: TextStyle(fontSize: 25),
                         ),
                         style: TextButton.styleFrom(
                             foregroundColor: Colors.white,

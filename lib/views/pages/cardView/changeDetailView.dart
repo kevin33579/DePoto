@@ -4,7 +4,7 @@ class ChangeDetailView extends StatefulWidget {
   ChangeDetailView({
     required this.prefix,
     required this.numbers,
-    required this.isDMG
+    required this.isDMG,
   });
 
   final prefix;
@@ -22,6 +22,7 @@ class _ChangeDetailViewState extends State<ChangeDetailView> {
   String number = '';
   List<String> capturedImagePath = [];
   String? selectedPrefix;
+  List<bool> isSelected = [false,true];
 
   final List<String> dropdownItems = [
     'Manual',
@@ -43,13 +44,22 @@ class _ChangeDetailViewState extends State<ChangeDetailView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       appBar: AppBar(
         title: Text(
           'Container Details',
+          style: TextStyle(
+            fontSize: 30
+          ),
         ),
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.black,
         foregroundColor: Colors.white,
         centerTitle: true,
+        leading: BackButton(
+          style: ButtonStyle(
+            iconSize: MaterialStateProperty.all(30)
+          ),
+        ),
       ),
       body: Padding(
         padding: EdgeInsets.all(10),
@@ -59,13 +69,15 @@ class _ChangeDetailViewState extends State<ChangeDetailView> {
               Text(
                 'Prefix : ' + widget.prefix,
                 style: TextStyle(
-                  fontSize: 22,
+                  fontSize: 30,
+                  color: Colors.white
                 ),
               ),
               Text(
                 'Number : ' + widget.numbers,
                 style: TextStyle(
-                  fontSize: 22,
+                  fontSize: 30,
+                  color: Colors.white
                 ),
               ),
               Container(
@@ -78,10 +90,10 @@ class _ChangeDetailViewState extends State<ChangeDetailView> {
                         Padding(
                           padding: EdgeInsets.all(10.0),
                           child: Text(
-                            'new prefix',
+                            'New Prefix',
                             textAlign: TextAlign.left,
                             style: TextStyle(
-                              fontSize: 22,
+                              fontSize: 30,
                               color: Colors.red,
                               fontWeight: FontWeight.bold,
                             ),
@@ -96,7 +108,7 @@ class _ChangeDetailViewState extends State<ChangeDetailView> {
                                 style: TextStyle(
                                   fontWeight: FontWeight.normal,
                                   color: Colors.grey,
-                                  fontSize: 22,
+                                  fontSize: 30,
                                 ),
                               ),
                               value: selectedDropdownValue,
@@ -104,7 +116,12 @@ class _ChangeDetailViewState extends State<ChangeDetailView> {
                               items: dropdownItems.map((item) {
                                 return DropdownMenuItem<String>(
                                   value: item,
-                                  child: Text(item),
+                                  child: Text(item,
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 30,
+                                        fontWeight: FontWeight.bold
+                                    ),),
                                 );
                               }).toList(),
                               onChanged: (value) {
@@ -112,6 +129,8 @@ class _ChangeDetailViewState extends State<ChangeDetailView> {
                                   selectedDropdownValue = value;
                                 });
                               },
+                              dropdownColor: Colors.black,
+                              iconSize: 40,
                             )),
                       ],
                     ),
@@ -124,11 +143,15 @@ class _ChangeDetailViewState extends State<ChangeDetailView> {
                             child: Text(
                               'Insert Prefix',
                               style: TextStyle(
-                                fontSize: 20,
+                                fontSize: 30,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.red,
                               ),
                             ),
+                          ),
+                          SizedBox(
+                            width: 0,
+                            height: 10,
                           ),
                           Expanded(
                             child: Padding(
@@ -136,6 +159,11 @@ class _ChangeDetailViewState extends State<ChangeDetailView> {
                               child: TextFormField(
                                 maxLength: 4,
                                 textAlign: TextAlign.right,
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 35,
+                                    fontWeight: FontWeight.bold
+                                ),
                                 onChanged: (value) {
                                   manualTextControler.value = TextEditingValue(
                                       text: value.toUpperCase(),
@@ -169,16 +197,25 @@ class _ChangeDetailViewState extends State<ChangeDetailView> {
                           child: Text(
                             'Number',
                             style: TextStyle(
-                              fontSize: 22,
+                              fontSize: 30,
                               fontWeight: FontWeight.bold,
                               color: Colors.red,
                             ),
                           ),
                         ),
+                        SizedBox(
+                          width: 60,
+                          height: 10,
+                        ),
                         Expanded(
                           child: Padding(
                             padding: EdgeInsets.all(10.0),
                             child: TextFormField(
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 35,
+                                  fontWeight: FontWeight.bold
+                              ),
                               maxLength: 7,
                               textAlign: TextAlign.right,
                               keyboardType: TextInputType.number,
@@ -205,23 +242,62 @@ class _ChangeDetailViewState extends State<ChangeDetailView> {
                       children: <Widget>[
                         Padding(
                           padding: EdgeInsets.all(10),
-                          child: Text(
-                            'Damage: ${widget.isDMG}',
-                            // Display the current state of the toggle button
-                            style: TextStyle(fontSize: 25.0),
-                          ),
-                        ),
-                        Spacer(),
-                        Padding(
-                          padding: EdgeInsets.all(10),
-                          child: Switch(
-                            value: widget.isDMG,
-                            onChanged: (value) {
+                          child: ToggleButtons(
+                            children: <Widget>[
+                              Padding(padding: EdgeInsets.all(5),
+                                child: Text("AV",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 35,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                              Padding(padding: EdgeInsets.all(5),
+                                child: Text("DMG",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 35,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
+                            isSelected: isSelected,
+                            selectedColor: isSelected[0] ? Colors.green : Colors.red,
+                            selectedBorderColor: isSelected[0] ? Colors.green : Colors.red,
+                            borderColor: isSelected[0] ? Colors.green : Colors.red,
+                            fillColor: isSelected[0] ? Colors.green : Colors.red,
+                            onPressed: (int index) {
                               setState(() {
-                                widget.isDMG = value; // Update the state of the toggle button
+                                for (int buttonIndex = 0; buttonIndex < isSelected.length; buttonIndex++) {
+                                  if (buttonIndex == index) {
+                                    isSelected[buttonIndex] = true;
+                                    widget.isDMG = true;
+                                  } else {
+                                    isSelected[buttonIndex] = false;
+                                    widget.isDMG = false;
+                                  }
+                                }
                               });
                             },
                           ),
+                          // Transform.scale(
+                          //   scale: 1.5,
+                          //   child: Switch(
+                          //     value: isDMG,
+                          //     onChanged: (value) {
+                          //       setState(() {
+                          //         isDMG = value; // Update the state of the toggle button
+                          //       });
+                          //     },
+                          //     activeColor: Colors.red,
+                          //     inactiveTrackColor: Colors.greenAccent,
+                          //     inactiveThumbColor: Colors.green,
+                          //
+                          //
+                          //   ),
+                          // ),
                         ),
                       ],
                     ),
