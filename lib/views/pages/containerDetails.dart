@@ -14,7 +14,7 @@ Future<void> _initCameras() async {
 class _ContainerDetailsState extends State<ContainerDetails> {
   String? selectedDropdownValue;
   TextEditingController textControler = TextEditingController();
-  TextEditingController manualTextControler = TextEditingController();
+  TextEditingController prefixTextControler = TextEditingController();
   String number = '';
   List<String> capturedImagePath = [];
   bool isDMG = false;
@@ -22,23 +22,46 @@ class _ContainerDetailsState extends State<ContainerDetails> {
   String? selectedPrefix;
   List<bool> isSelected = [true, false];
 
-  final List<String> dropdownItems = [
-    'Manual',
-    'AMCU',
-    'AMFU',
-    'APHU',
-    'APZU',
-  ];
+  List<String> dropdownItems = ["Manual"];
 
-  bool isSubmitButtonEnabled() {
-    if(selectedDropdownValue == "Manual"){
-      return manualTextControler.text.toUpperCase().isNotEmpty && manualTextControler.text.toUpperCase().length >=4 && textControler.text.isNotEmpty && textControler.text.length>=7;
-    }else{
-      return selectedDropdownValue != null && textControler.text.length == 7;
-
-    }
+  @override
+  void initState() {
+    super.initState();
+    prefixData();
   }
 
+  bool isSubmitButtonEnabled() {
+    if(selectedPrefix == 'Manual') {
+      return prefixTextControler.text.length == 4 &&
+          textControler.text.length == 7;
+    }else{
+      return selectedPrefix != '' && textControler.text.length == 7;
+    }
+
+  }
+
+  void prefixData() async {
+    // Reference to the Firestore collection and document
+    String collectionPath = "Prefix"; // Replace with your actual collection path
+    String documentId = "hB9lUoxOLMXHwvyFTied"; // Replace with the actual document ID
+    String fieldName = "prefix"; // Replace with the actual field name
+
+    DocumentSnapshot documentSnapshot =
+    await FirebaseFirestore.instance.collection(collectionPath).doc(documentId).get();
+
+    if (documentSnapshot.exists) {
+      // Access the data in the document
+      Map<String, dynamic> data = documentSnapshot.data() as Map<String, dynamic>;
+
+      if (data.containsKey(fieldName)) {
+        // Access the field data (assuming it's a List<String>)
+        setState(() {
+          dropdownItems = List<String>.from(data[fieldName]);
+        });
+      }
+      print("exist");
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -95,38 +118,73 @@ class _ContainerDetailsState extends State<ContainerDetails> {
                 ),
                 Spacer(),
                 Padding(
-                    padding: EdgeInsets.all(10.0),
-                    child: DropdownButton(
-                      hint: const Text(
-                        'Select',
-                        style: TextStyle(
-                          fontWeight: FontWeight.normal,
-                          color: Colors.grey,
-                          fontSize: 35,
-                        ),
+                    padding: EdgeInsets.only(right: 1),
+                    child: ElevatedButton(
+                      style: ButtonStyle(
+                        shape: MaterialStateProperty.all(ContinuousRectangleBorder()),
+                        padding: MaterialStateProperty.all(EdgeInsets.zero),
+                        backgroundColor: MaterialStateProperty.all(Colors.black),
                       ),
-                      value: selectedDropdownValue,
-                      icon: const Icon(Icons.keyboard_arrow_down),
-                      items: dropdownItems.map((item) {
-                        return DropdownMenuItem<String>(
-                          value: item,
-                          child: Text(item,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 35,
-                            fontWeight: FontWeight.bold
-                          ),),
-                        );
-                      }).toList(),
-                      onChanged: (value) {
-                        setState(() {
-                          selectedDropdownValue = value;
-                        });
-                      },
-                      dropdownColor: Colors.black,
-                      iconSize: 50,
-                    )
+                    onPressed: () {
+                      _showPrefixDialog(context);
+                    },
+                    child: Row(
+                      children: <Widget>[
+                        Padding(
+                          padding: EdgeInsets.only(right: 5.0),
+                          child: Text(
+                            selectedDropdownValue != null ? selectedDropdownValue! :'Select' ,
+                            textAlign: TextAlign.left,
+                            style: TextStyle(
+                              fontSize: 35,
+                              color: selectedDropdownValue != null ? Colors.white : Colors.grey,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        Padding(
+                            padding: EdgeInsets.only(right: 0),
+                          child:
+                          Icon(Icons.keyboard_arrow_down, size: 35),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
+                // Padding(
+                //     padding: EdgeInsets.all(10.0),
+                //     child: DropdownButton<String>(
+                //
+                //       hint: const Text(
+                //         'Select',
+                //         style: TextStyle(
+                //           fontWeight: FontWeight.normal,
+                //           color: Colors.grey,
+                //           fontSize: 35,
+                //         ),
+                //       ),
+                //       value: selectedDropdownValue,
+                //       icon: const Icon(Icons.keyboard_arrow_down),
+                //       items: dropdownItems.map((String item) {
+                //         return DropdownMenuItem<String>(
+                //           value: item,
+                //           child: Text(item,
+                //           style: TextStyle(
+                //             color: Colors.white,
+                //             fontSize: 35,
+                //             fontWeight: FontWeight.bold
+                //           ),),
+                //         );
+                //       }).toList(),
+                //       onChanged: (value) {
+                //         setState(() {
+                //           selectedDropdownValue = value;
+                //         });
+                //       },
+                //       dropdownColor: Colors.black,
+                //       iconSize: 50,
+                //     )
+                // ),
               ],
             ),
             if (selectedDropdownValue == 'Manual')
@@ -161,15 +219,15 @@ class _ContainerDetailsState extends State<ContainerDetails> {
                         textAlign: TextAlign.right,
                         cursorColor: Colors.white,
                         onChanged: (value) {
-                          manualTextControler.value = TextEditingValue(
+                          prefixTextControler.value = TextEditingValue(
                               text: value.toUpperCase(),
-                              selection: manualTextControler.selection
+                              selection: prefixTextControler.selection
                           );
                           setState(() {
-                            
+
                           });
                         },
-                        controller: manualTextControler,
+                        controller: prefixTextControler,
                         validator: (text) {
                           if (text == null || text.isEmpty) {
                             return 'can\'t be empty';
@@ -238,7 +296,7 @@ class _ContainerDetailsState extends State<ContainerDetails> {
                   child: ToggleButtons(
                     children: <Widget>[
                       Padding(padding: EdgeInsets.all(5),
-                      child: Text("AV",
+                      child: Text("  AV  ",
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 35,
@@ -275,83 +333,7 @@ class _ContainerDetailsState extends State<ContainerDetails> {
                       });
                     },
                   ),
-                  // Transform.scale(
-                  //   scale: 1.5,
-                  //   child: Switch(
-                  //     value: isDMG,
-                  //     onChanged: (value) {
-                  //       setState(() {
-                  //         isDMG = value; // Update the state of the toggle button
-                  //       });
-                  //     },
-                  //     activeColor: Colors.red,
-                  //     inactiveTrackColor: Colors.greenAccent,
-                  //     inactiveThumbColor: Colors.green,
-                  //
-                  //
-                  //   ),
-                  // ),
                 ),
-                // GestureDetector(
-                //   onTap: () {
-                //     setState(() {
-                //       isDMG = !isDMG;
-                //     });
-                //   },
-                //   child: Container(
-                //     // width: Size.width * 0.35,
-                //     decoration: BoxDecoration(
-                //         borderRadius: BorderRadius.circular(30),
-                //         color: Colors.green),
-                //     child: Padding(
-                //       padding: const EdgeInsets.all(8.0),
-                //       child: Row(
-                //         mainAxisAlignment:
-                //         MainAxisAlignment.spaceBetween,
-                //         children: [
-                //           Container(
-                //             width: 60,
-                //             height: 30,
-                //             decoration: BoxDecoration(
-                //                 borderRadius:
-                //                 BorderRadius.circular(30),
-                //                 color: val
-                //                     ? Colors.white
-                //                     : kSecondaryColor),
-                //             child: Center(
-                //                 child: Text(
-                //                   'BUY',
-                //                   style: TextStyle(
-                //                       fontWeight: FontWeight.bold,
-                //                       color: val
-                //                           ? Colors.black
-                //                           : Colors.white),
-                //                 )),
-                //           ),
-                //           Container(
-                //             width: 60,
-                //             height: 30,
-                //             decoration: BoxDecoration(
-                //                 borderRadius:
-                //                 BorderRadius.circular(30),
-                //                 color: val
-                //                     ? kSecondaryColor
-                //                     : Colors.white),
-                //             child: Center(
-                //                 child: Text(
-                //                   'SELL',
-                //                   style: TextStyle(
-                //                       fontWeight: FontWeight.bold,
-                //                       color: val
-                //                           ? Colors.white
-                //                           : Colors.black),
-                //                 )),
-                //           ),
-                //         ],
-                //       ),
-                //     ),
-                //   ),
-                // ),
               ],
             ),
 
@@ -360,18 +342,20 @@ class _ContainerDetailsState extends State<ContainerDetails> {
               padding: EdgeInsets.all(10.0),
               child: Center(
                 child: TextButton(
-                  child: Text('Submit'),
+                  child: Text('SUBMIT'),
                   style: TextButton.styleFrom(
-                    textStyle: const TextStyle(fontSize: 20.0),
+                    fixedSize: Size(400, 70),
+                    textStyle: const TextStyle(fontSize: 35),
                     backgroundColor: Colors.blue,
                     foregroundColor: Colors.white,
+                    shape: ContinuousRectangleBorder(),
                     padding: EdgeInsets.only(
                         left: 40.0, right: 40.0, top: 15.0, bottom: 15.0),
                   ),
                   onPressed: isSubmitButtonEnabled()
                       ? () {
                     if(selectedDropdownValue == 'Manual'){
-                      selectedPrefix = manualTextControler.text;
+                      selectedPrefix = prefixTextControler.text;
                     }else{
                       selectedPrefix = selectedDropdownValue;
                     }
@@ -398,6 +382,37 @@ class _ContainerDetailsState extends State<ContainerDetails> {
           ],
         ),
       )),
+    );
+  }
+
+  void _showPrefixDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: Text('Select Prefix'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: dropdownItems.map((item) {
+              return ListTile(
+                title: Text(
+                  item,
+                  style: TextStyle(
+                    color: Colors.black, // Adjust text color as needed
+                    fontSize: 20, // Adjust font size as needed
+                  ),
+                ),
+                onTap: () {
+                  setState(() {
+                    selectedDropdownValue = item;
+                  });
+                  Navigator.of(context).pop();
+                },
+              );
+            }).toList(),
+          ),
+        );
+      },
     );
   }
 }

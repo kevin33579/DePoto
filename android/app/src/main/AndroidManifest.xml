@@ -7,6 +7,10 @@
         android:name="android.hardware.camera"
         android:required="false" />
 
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <uses-permission android:name="android.permission.CAMERA" />
     <application
         android:label="DePoto V2"
         android:name="${applicationName}"
@@ -38,5 +42,4 @@
             android:name="flutterEmbedding"
             android:value="2" />
     </application>
-    <uses-permission android:name="android.permission.CAMERA" />
 </manifest>

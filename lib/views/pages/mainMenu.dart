@@ -35,7 +35,7 @@ class _MainMenuState extends State<MainMenu> {
                       fixedSize: Size(400, 100),
                       textStyle: const TextStyle(fontSize: 35),
                       backgroundColor: Colors.blue,
-                      // shape: ,
+                      shape: ContinuousRectangleBorder(),
                       padding: EdgeInsets.only(
                           left: 40.0, right: 40.0, top: 15.0, bottom: 15.0),
                     ),
@@ -58,17 +58,21 @@ class _MainMenuState extends State<MainMenu> {
                         textStyle: const TextStyle(fontSize: 35),
                         fixedSize: Size(400, 100),
                         backgroundColor: Colors.blue,
+                        shape: ContinuousRectangleBorder(),
                         padding: EdgeInsets.only(
                             left: 40.0, right: 40.0, top: 15.0, bottom: 15.0),
                       ),
-                      onPressed: null,
+                      onPressed: (){
+                        Navigator.pushNamed(context, CraniView.routeName);
+                      },
                       child: const Text(
                         'CRANI',
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
                         ),
-                      )),
+                      ),
+                  ),
                 ),
               ],
             ),

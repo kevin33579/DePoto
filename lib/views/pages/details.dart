@@ -1,10 +1,12 @@
-part of '../pages.dart';
+part of 'pages.dart';
 
 class Details extends StatefulWidget {
   String folderPath;
+  String date;
 
   Details({
     required this.folderPath,
+    required this.date
   });
 
   @override
@@ -29,12 +31,11 @@ class _DetailsState extends State<Details> {
   Widget build(BuildContext context) {
     return StreamBuilder(
         stream: FirebaseFirestore.instance.doc(widget.folderPath).snapshots(),
-        builder: (context,snapshot){
-          if(!snapshot.hasData){
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
             return CircularProgressIndicator();
           }
           final data = snapshot.data!.data() as Map<String, dynamic>;
-
           final prefix = data['prefix'];
           final number = data['number'];
           bool isDMG = data['isDMG'];
@@ -44,19 +45,20 @@ class _DetailsState extends State<Details> {
           return Scaffold(
             backgroundColor: Colors.black,
             appBar: AppBar(
-              title: Text(folderName,
-              style: TextStyle(
-                fontSize: 30,
-              ),),
+              title: Text(
+                folderName,
+                style: TextStyle(
+                  fontSize: 30,
+                ),
+              ),
               foregroundColor: Colors.white,
               backgroundColor: Colors.black,
               centerTitle: true,
               leading: BackButton(
-                onPressed: (){
+                onPressed: () {
                   Navigator.pop(context);
                 },
               ),
-
             ),
             body: Align(
               alignment: Alignment.topCenter,
@@ -71,11 +73,12 @@ class _DetailsState extends State<Details> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) => ChangeDetailView(
-                                      prefix: prefix,
-                                      numbers: number,
-                                    isDMG: isDMG,
-
-                                  )));
+                                        prefix: prefix,
+                                        numbers: number,
+                                        isDMG: isDMG,
+                                        imageUrl: images,
+                                    date: widget.date,
+                                      )));
                         },
                         child: Text(
                           'CHANGE DETAIL',
@@ -84,6 +87,7 @@ class _DetailsState extends State<Details> {
                         style: TextButton.styleFrom(
                             foregroundColor: Colors.white,
                             backgroundColor: Colors.blue,
+                            shape: ContinuousRectangleBorder(),
                             fixedSize: Size(300, 70)),
                       ),
                     ),
@@ -99,7 +103,8 @@ class _DetailsState extends State<Details> {
                                 return AlertDialog(
                                   title: Text('Change Status:'),
                                   content: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     mainAxisSize: MainAxisSize.min,
                                     children: <Widget>[
                                       Text(
@@ -115,27 +120,28 @@ class _DetailsState extends State<Details> {
                                         },
                                         child: Text('Cancel')),
                                     TextButton(
-                                        onPressed: () {
-                                          dataServices.deleteData(Data(
-                                              prefix: prefix,
-                                              numbers: number,
-                                              images: images,
-                                              isDMG: isDMG));
-                                          if (isDMG == false) {
-                                            isDMG = true;
-                                          } else {
-                                            isDMG = false;
-                                          }
-                                          DataServices().addData(Data(
-                                              prefix: prefix,
-                                              numbers: number,
-                                              images: images,
-                                              isDMG: isDMG));
-                                          print(isDMG);
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) => Survei()));
+                                        onPressed: () async {
+                                          Future.delayed(Duration.zero,()async{
+                                            isDMG = !isDMG;
+                                            final newImages =
+                                                await ImageServices()
+                                                .renameFolderImageOnIsDmg(
+                                                prefix, number, isDMG,widget.date);
+
+                                            DataServices().addData(Data(
+                                                prefix: prefix,
+                                                numbers: number,
+                                                images: newImages,
+                                                isDMG: isDMG),widget.date);
+                                            isDMG = !isDMG;
+                                            dataServices.deleteData(Data(
+                                                prefix: prefix,
+                                                numbers: number,
+                                                images: images,
+                                                isDMG: isDMG),widget.date);
+                                          });
+                                          Navigator.pushReplacementNamed(
+                                              context, SurveiList.routeName);
                                         },
                                         child: Text('Lanjut')),
                                   ],
@@ -149,6 +155,7 @@ class _DetailsState extends State<Details> {
                         style: TextButton.styleFrom(
                             foregroundColor: Colors.white,
                             backgroundColor: Colors.blue,
+                            shape: ContinuousRectangleBorder(),
                             fixedSize: Size(300, 70)),
                       ),
                     ),
@@ -159,12 +166,13 @@ class _DetailsState extends State<Details> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => CameraScreen(
-                                      prefix: prefix,
-                                      numbers: number,
-                                    images: images,
-                                    isDMG: isDMG,
-                                  )));
+                                  builder: (context) => AddPhotoData(
+                                        prefix: prefix,
+                                        numbers: number,
+                                        images: images,
+                                        isDMG: isDMG,
+                                    date: widget.date,
+                                      )));
                         },
                         child: Text(
                           'ADD PHOTO',
@@ -173,6 +181,7 @@ class _DetailsState extends State<Details> {
                         style: TextButton.styleFrom(
                             foregroundColor: Colors.white,
                             backgroundColor: Colors.blue,
+                            shape: ContinuousRectangleBorder(),
                             fixedSize: Size(300, 70)),
                       ),
                     ),
@@ -196,6 +205,7 @@ class _DetailsState extends State<Details> {
                         style: TextButton.styleFrom(
                             foregroundColor: Colors.white,
                             backgroundColor: Colors.blue,
+                            shape: ContinuousRectangleBorder(),
                             fixedSize: Size(300, 70)),
                       ),
                     ),
@@ -204,7 +214,6 @@ class _DetailsState extends State<Details> {
               ),
             ),
           );
-        }
-    );
+        });
   }
 }

@@ -1,15 +1,19 @@
-part of '../pages.dart';
+part of 'pages.dart';
 
 class ChangeDetailView extends StatefulWidget {
   ChangeDetailView({
     required this.prefix,
     required this.numbers,
     required this.isDMG,
+    required this.imageUrl,
+    required this.date,
   });
 
   final prefix;
   final numbers;
+  final List<String> imageUrl;
   bool isDMG;
+  String date;
 
   @override
   State<ChangeDetailView> createState() => _ChangeDetailViewState();
@@ -39,6 +43,38 @@ class _ChangeDetailViewState extends State<ChangeDetailView> {
       return selectedDropdownValue != null && textControler.text.length == 7;
 
     }
+  }
+
+  Future<List<String>> fetchImageLinksFromFirestore() async {
+    try {
+      final formattedDate = DateFormat('yyyy/MM/dd').format(DateTime.now());
+
+      String finalFolderName;
+
+      if (widget.isDMG == false) {
+        finalFolderName = '${widget.prefix + widget.numbers}';
+      } else {
+        finalFolderName = '${widget.prefix + widget.numbers}_DMG';
+      }
+
+      // Construct the Firestore path to the image links
+      final dataCollection = FirebaseFirestore.instance.collection('DKM/IN/$formattedDate');
+      final dataDocument = dataCollection.doc(finalFolderName);
+
+      final data = await dataDocument.get();
+      final List<String> imageLinks = (data['images'] as List).cast<String>();
+
+      return imageLinks;
+    } catch (e) {
+      print('Error fetching image links from Firestore: $e');
+      return [];
+    }
+  }
+
+  Future<List<Reference>> fetchImagesInFolder(String folderPath) async {
+    final storage = FirebaseStorage.instance;
+    ListResult result = await storage.ref(folderPath).listAll();
+    return result.items;
   }
 
   @override
@@ -101,37 +137,39 @@ class _ChangeDetailViewState extends State<ChangeDetailView> {
                         ),
                         Spacer(),
                         Padding(
-                            padding: EdgeInsets.all(10.0),
-                            child: DropdownButton(
-                              hint: const Text(
-                                'Select',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.normal,
-                                  color: Colors.grey,
-                                  fontSize: 30,
-                                ),
-                              ),
-                              value: selectedDropdownValue,
-                              icon: const Icon(Icons.keyboard_arrow_down),
-                              items: dropdownItems.map((item) {
-                                return DropdownMenuItem<String>(
-                                  value: item,
-                                  child: Text(item,
+                          padding: EdgeInsets.only(right: 1),
+                          child: ElevatedButton(
+                            style: ButtonStyle(
+                              shape: MaterialStateProperty.all(ContinuousRectangleBorder()),
+                              padding: MaterialStateProperty.all(EdgeInsets.zero),
+                              backgroundColor: MaterialStateProperty.all(Colors.black),
+                            ),
+                            onPressed: () {
+                              _showPrefixDialog(context);
+                            },
+                            child: Row(
+                              children: <Widget>[
+                                Padding(
+                                  padding: EdgeInsets.only(right: 5.0),
+                                  child: Text(
+                                    selectedDropdownValue != null ? selectedDropdownValue! :'Select' ,
+                                    textAlign: TextAlign.left,
                                     style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 30,
-                                        fontWeight: FontWeight.bold
-                                    ),),
-                                );
-                              }).toList(),
-                              onChanged: (value) {
-                                setState(() {
-                                  selectedDropdownValue = value;
-                                });
-                              },
-                              dropdownColor: Colors.black,
-                              iconSize: 40,
-                            )),
+                                      fontSize: 35,
+                                      color: selectedDropdownValue != null ? Colors.white : Colors.grey,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.only(right: 0),
+                                  child:
+                                  Icon(Icons.keyboard_arrow_down, size: 35),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                     if (selectedDropdownValue == 'Manual')
@@ -237,71 +275,6 @@ class _ChangeDetailViewState extends State<ChangeDetailView> {
                       ],
                     ),
 
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Padding(
-                          padding: EdgeInsets.all(10),
-                          child: ToggleButtons(
-                            children: <Widget>[
-                              Padding(padding: EdgeInsets.all(5),
-                                child: Text("AV",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 35,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                              Padding(padding: EdgeInsets.all(5),
-                                child: Text("DMG",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 35,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ],
-                            isSelected: isSelected,
-                            selectedColor: isSelected[0] ? Colors.green : Colors.red,
-                            selectedBorderColor: isSelected[0] ? Colors.green : Colors.red,
-                            borderColor: isSelected[0] ? Colors.green : Colors.red,
-                            fillColor: isSelected[0] ? Colors.green : Colors.red,
-                            onPressed: (int index) {
-                              setState(() {
-                                for (int buttonIndex = 0; buttonIndex < isSelected.length; buttonIndex++) {
-                                  if (buttonIndex == index) {
-                                    isSelected[buttonIndex] = true;
-                                    widget.isDMG = true;
-                                  } else {
-                                    isSelected[buttonIndex] = false;
-                                    widget.isDMG = false;
-                                  }
-                                }
-                              });
-                            },
-                          ),
-                          // Transform.scale(
-                          //   scale: 1.5,
-                          //   child: Switch(
-                          //     value: isDMG,
-                          //     onChanged: (value) {
-                          //       setState(() {
-                          //         isDMG = value; // Update the state of the toggle button
-                          //       });
-                          //     },
-                          //     activeColor: Colors.red,
-                          //     inactiveTrackColor: Colors.greenAccent,
-                          //     inactiveThumbColor: Colors.green,
-                          //
-                          //
-                          //   ),
-                          // ),
-                        ),
-                      ],
-                    ),
-
                     //submit button
                     Padding(
                       padding: EdgeInsets.all(10.0),
@@ -309,9 +282,11 @@ class _ChangeDetailViewState extends State<ChangeDetailView> {
                         child: TextButton(
                           child: Text('CHANGE'),
                           style: TextButton.styleFrom(
-                            textStyle: const TextStyle(fontSize: 20.0),
+                            textStyle: const TextStyle(fontSize: 35),
                             backgroundColor: Colors.blue,
+                            fixedSize: Size(400, 70),
                             foregroundColor: Colors.white,
+                            shape: ContinuousRectangleBorder(),
                             padding: EdgeInsets.only(
                                 left: 40.0,
                                 right: 40.0,
@@ -319,30 +294,36 @@ class _ChangeDetailViewState extends State<ChangeDetailView> {
                                 bottom: 15.0),
                           ),
                           onPressed: isSubmitButtonEnabled()
-                              ? () {
+                              ? () async {
                             if(selectedDropdownValue == 'Manual'){
                               selectedPrefix = manualTextControler.text;
                             }else{
                               selectedPrefix = selectedDropdownValue;
                             }
+                            print(widget.imageUrl);
                                   if (selectedDropdownValue != null &&
                                       isSubmitButtonEnabled()) {
-                                    final selectedNumber = textControler.text;
-                                    DataServices().deleteData(
-                                        Data(
-                                            prefix: widget.prefix,
-                                            numbers: widget.numbers,
-                                            images: [],
-                                            isDMG: false),);
-                                    Navigator.push(
+                                    Future.delayed(Duration.zero,()async{
+                                      final selectedNumber = textControler.text;
+                                      final image = await ImageServices().renameFolderImage(widget.prefix, widget.numbers, selectedPrefix!, selectedNumber, widget.isDMG,widget.date);
+                                      DataServices().addData(Data(
+                                          prefix: selectedPrefix!,
+                                          numbers: selectedNumber,
+                                          images: image,
+                                          isDMG: widget.isDMG,
+                                      ),widget.date);
+                                      DataServices().deleteData(Data(
+                                        prefix: widget.prefix,
+                                        numbers: widget.numbers,
+                                        images: widget.imageUrl,
+                                        isDMG: widget.isDMG,
+                                      ),widget.date);
+                                    });
+                                    Navigator.pushReplacement(
                                         context,
                                         MaterialPageRoute(
-                                            builder: (context) => CameraScreen(
-                                                prefix: selectedPrefix!,
-                                                numbers: selectedNumber,
-                                              images: [],
-                                              isDMG: widget.isDMG,
-                                            )));
+                                            builder: (context) => SurveiList()
+                                        ));
                                   }
                                 }
                               : null,
@@ -356,6 +337,37 @@ class _ChangeDetailViewState extends State<ChangeDetailView> {
           ),
         ),
       ),
+    );
+
+  }
+  void _showPrefixDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: Text('Select Prefix'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: dropdownItems.map((item) {
+              return ListTile(
+                title: Text(
+                  item,
+                  style: TextStyle(
+                    color: Colors.black, // Adjust text color as needed
+                    fontSize: 20, // Adjust font size as needed
+                  ),
+                ),
+                onTap: () {
+                  setState(() {
+                    selectedDropdownValue = item;
+                  });
+                  Navigator.of(context).pop();
+                },
+              );
+            }).toList(),
+          ),
+        );
+      },
     );
   }
 }

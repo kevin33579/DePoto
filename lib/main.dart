@@ -38,6 +38,10 @@ class MyApp extends StatelessWidget {
         ContainerDetails.routeName:(context) => ContainerDetails(),
         Survei.routeName: (context) => Survei(),
         SurveiList.routeName: (context) => SurveiList(),
+        CraniView.routeName:(context) => CraniView(),
+        CraniContainerDetails.routeName: (context) => CraniContainerDetails(),
+        CraniList.routeName:(context)=> CraniList(),
+
 
       },
     );

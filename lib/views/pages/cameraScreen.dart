@@ -22,6 +22,7 @@ class _CameraScreenState extends State<CameraScreen> {
   Future<void>? _initializeControllerFuture;
   List<XFile> capturedImage = [];
   late Data data;
+  late MaterialColor buttonColor;
 
   DataServices dataServices = DataServices(); // Track the upload progress
 
@@ -51,6 +52,11 @@ class _CameraScreenState extends State<CameraScreen> {
   void togglePressedState() {
     setState(() {
       widget.isDMG = !widget.isDMG;
+      if(widget.isDMG == true){
+        buttonColor = Colors.red;
+      }else{
+        buttonColor = Colors.blue;
+      }
     });
   }
 
@@ -111,7 +117,8 @@ class _CameraScreenState extends State<CameraScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _controller = CameraController(cameras[0], ResolutionPreset.high);
+    _controller = CameraController(cameras[0], ResolutionPreset.high,
+      imageFormatGroup: ImageFormatGroup.yuv420);
     _controller.initialize().then((_) {
       if (!mounted) {
         return;
@@ -127,6 +134,13 @@ class _CameraScreenState extends State<CameraScreen> {
             print(e.description);
             break;
         }
+      }
+    });
+    setState(() {
+      if(widget.isDMG == true){
+        buttonColor = Colors.red;
+      }else{
+        buttonColor = Colors.blue;
       }
     });
   }
@@ -181,9 +195,9 @@ class _CameraScreenState extends State<CameraScreen> {
     }
   }
 
+
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
         body: Stack(
       children: [
@@ -195,9 +209,9 @@ class _CameraScreenState extends State<CameraScreen> {
 
         //DMG value
         Align(
-          alignment: Alignment.topRight,
+          alignment: Alignment.topCenter,
           child: widget.isDMG ?Padding(
-            padding: EdgeInsets.only(right: 10,top: 30),
+            padding: EdgeInsets.only(top: 30),
             child: Container(
               child: Wrap(
                 alignment: WrapAlignment.center,
@@ -217,6 +231,29 @@ class _CameraScreenState extends State<CameraScreen> {
               ),
             ),
           ):null,
+        ),
+
+        //DMG Button
+        Align(
+          alignment: Alignment.topRight,
+          child: Padding(
+            padding: EdgeInsets.only(right: 10,top: 30),
+            child: Container(
+              decoration: BoxDecoration(
+                color: buttonColor,
+                borderRadius: BorderRadius.circular(10.0), // Adjust the radius as needed
+              ),
+              child: TextButton(
+                child: Text('DMG',
+                  style: TextStyle(
+                    fontSize: 30,
+                    color: Colors.white,
+                  ),),
+                onPressed: togglePressedState,
+
+              ),
+            )
+          ),
         ),
 
         //Zoom in Zoom out
@@ -366,18 +403,30 @@ class _CameraScreenState extends State<CameraScreen> {
                   },
                 );
                 Future.delayed(Duration.zero,() async{
+                  final now = DateTime.now();
+                  final formattedDate = DateFormat('yyyyMMdd').format(now);
+                  final formattedDateNow = DateFormat('yyyy/MM/dd').format(now);
 
                   for(var images in capturedImage){
                     final data = createImageData(widget.prefix, widget.numbers, images);
-                    final now = DateTime.now();
-                    final formattedDate = DateFormat('yyyyMMdd').format(now);
+
                     final formattedDateFolder = DateFormat('yyyy/MM/dd/').format(now);
                     final String formattedSeconds = DateFormat('ss').format(now);
                     final String formattedMilliseconds = DateFormat('SSS').format(now);
-                    final String customImageName =
-                        '${data.prefix + data.numbers + '_' + formattedDate + '_' + formattedSeconds + '_' + formattedMilliseconds}';
+                    String customImageName;
+                    if(widget.isDMG == true){
+                      customImageName = data.prefix + data.numbers + 'DMG_' + formattedDate + '_' + formattedSeconds + '_' + formattedMilliseconds;
+                    }else{
+                      customImageName = data.prefix + data.numbers + '_' + formattedDate + '_' + formattedSeconds + '_' + formattedMilliseconds;
+                    }
                     final String customImageNames = customImageName + '.jpg';
-                    final String folderName = '${data.prefix + data.numbers}';
+
+                    String folderName;
+                    if(widget.isDMG == true){
+                      folderName = '${data.prefix + data.numbers}DMG';
+                    }else{
+                      folderName = '${data.prefix + data.numbers}';
+                    }
                     final String folderPath = '$formattedDateFolder';
 
                     var urlList = (await _uploadImageToFirebaseStorage(
@@ -392,7 +441,7 @@ class _CameraScreenState extends State<CameraScreen> {
                       numbers: widget.numbers,
                       images: widget.images,
                       isDMG: widget.isDMG);
-                  dataServices.addData(data);
+                  dataServices.addData(data,formattedDateNow);
                 });
 
                 Navigator.pushReplacementNamed(

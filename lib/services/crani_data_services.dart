@@ -1,7 +1,7 @@
 part of 'services.dart';
 
-class DataServices{
-  static CollectionReference dataCollection = FirebaseFirestore.instance.collection('DKM/IN');
+class CraniDataServices{
+  static CollectionReference dataCollection = FirebaseFirestore.instance.collection('DKM/OUT');
   static DocumentReference? dataDocument;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   static Reference? ref;
@@ -25,7 +25,7 @@ class DataServices{
 
 
 
-      final dkmDocRef = _firestore.collection('DKM/IN/$date').doc(finalFolderName);
+      final dkmDocRef = _firestore.collection('DKM/OUT/$date').doc(finalFolderName);
 
       await dkmDocRef.update({
         'prefix': data.prefix,
@@ -51,7 +51,7 @@ class DataServices{
 
 
 
-      final dkmDocRef = _firestore.collection('DKM/IN/$date').doc(finalFolderName);
+      final dkmDocRef = _firestore.collection('DKM/OUT/$date').doc(finalFolderName);
 
       await dkmDocRef.set({
         'prefix': data.prefix,
@@ -75,8 +75,8 @@ class DataServices{
         oldFolderName = '${data.prefix+data.numbers}DMG';
       }
 
-     final doc = await _firestore.collection('/DKM/IN/$date').doc(oldFolderName);
-     doc.delete();
+      final doc = await _firestore.collection('/DKM/OUT/$date').doc(oldFolderName);
+      doc.delete();
 
     }catch (e) {
       print('Error saving data to Firestore: $e');
@@ -97,7 +97,7 @@ class DataServices{
       isDMG ? '$newPrefix$newNumbers'+'DMG' : '$newPrefix$newNumbers';
       final oldFolderName =
       isDMG ? '$newPrefix$newNumbers'+'DMG' : '$newPrefix$newNumbers';
-      final dataCollection = FirebaseFirestore.instance.collection('DKM/IN/$date');
+      final dataCollection = FirebaseFirestore.instance.collection('DKM/OUT/$date');
       final dataDocument = dataCollection.doc(oldFolderName);
       final dataNewDocument = dataCollection.doc(finalFolderName);
       final data = await dataDocument.get();
@@ -121,7 +121,7 @@ class DataServices{
         final oldStorageRef = FirebaseStorage.instance.ref().child(imageName);
         final newStorageRef = FirebaseStorage.instance
             .ref()
-            .child('/DKM/IN/$date/$finalFolderName/$imageName');
+            .child('/DKM/OUT/$date/$finalFolderName/$imageName');
 
         await oldStorageRef.writeToFile((await newStorageRef.getDownloadURL()) as io.File);
 
@@ -132,7 +132,7 @@ class DataServices{
 
       // 6. Update the Firestore document with the new image URLs
       final updatedImageLinks = imageLinks
-          .map((imageUrl) => '/DKM/IN/$date/$finalFolderName/${imageUrl.split('/').last}')
+          .map((imageUrl) => '/DKM/OUT/$date/$finalFolderName/${imageUrl.split('/').last}')
           .toList();
       await dataDocument.update({'images': updatedImageLinks});
     } catch (e) {

@@ -1,13 +1,13 @@
 part of 'pages.dart';
 
-class SurveiList extends StatefulWidget {
+class CraniList extends StatefulWidget {
   static const String routeName = '/surveilist';
 
   @override
-  State<SurveiList> createState() => _SurveiListState();
+  State<CraniList> createState() => _CraniListState();
 }
 
-class _SurveiListState extends State<SurveiList> {
+class _CraniListState extends State<CraniList> {
   DateTime selectedDate = DateTime.now();
 
   Future<void> _selectDate(BuildContext context) async {
@@ -42,8 +42,8 @@ class _SurveiListState extends State<SurveiList> {
           leading: BackButton(
             onPressed: () {
               Navigator.pushReplacement(context,
-              MaterialPageRoute(builder: (context)=> Survei()
-              ));
+                  MaterialPageRoute(builder: (context)=> CraniView()
+                  ));
             },
             color: Colors.white,
             style: IconButton.styleFrom(iconSize: 35),
@@ -68,16 +68,16 @@ class _SurveiListState extends State<SurveiList> {
                   child: Container(
                     padding: EdgeInsets.all(10.0),
                     decoration: BoxDecoration(
-                      border: Border.all(),
-                      borderRadius: BorderRadius.circular(5.0),
-                      color: Colors.grey
+                        border: Border.all(),
+                        borderRadius: BorderRadius.circular(5.0),
+                        color: Colors.grey
                     ),
                     child: Text(
                       date,
                       style: TextStyle(
-                        fontSize: 35.0,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white
+                          fontSize: 35.0,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white
                       ),
                     ),
                   ),
@@ -88,7 +88,7 @@ class _SurveiListState extends State<SurveiList> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => CardView(date: date)));
+                            builder: (context) => CraniCardView(date: date)));
                   },
                   child: Text(
                     "Search",

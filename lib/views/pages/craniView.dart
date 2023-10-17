@@ -1,23 +1,25 @@
 part of 'pages.dart';
 
-class Survei extends StatefulWidget {
-  static const routeName = '/survei';
+class CraniView extends StatefulWidget {
+  static const String routeName = '/crani';
 
   @override
-  _SurveiState createState() => _SurveiState();
+  State<CraniView> createState() => _CraniViewState();
 }
 
-class _SurveiState extends State<Survei> {
+class _CraniViewState extends State<CraniView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-        title: Text('SURVEI',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 35
-        ),),
+        title: Text('Crani',
+          style: TextStyle(
+              color: Colors.white,
+              fontSize: 35
+          ),),
+        backgroundColor: Colors.black,
+        centerTitle: true,
         leading: IconButton(
           icon: Icon(
             Icons.home,
@@ -28,8 +30,6 @@ class _SurveiState extends State<Survei> {
             Navigator.pushReplacementNamed(context, MainMenu.routeName);
           },
         ),
-        backgroundColor: Colors.black,
-        centerTitle: true,
       ),
       body: SafeArea(
         child: Center(
@@ -41,16 +41,16 @@ class _SurveiState extends State<Survei> {
                   padding: EdgeInsets.all(8.0),
                   child: TextButton(
                     style: TextButton.styleFrom(
+                      fixedSize: Size(400, 100),
                       textStyle: const TextStyle(fontSize: 35),
                       backgroundColor: Colors.blue,
-                      fixedSize: Size(400, 100),
                       shape: ContinuousRectangleBorder(),
+                      // shape: ,
                       padding: EdgeInsets.only(
                           left: 40.0, right: 40.0, top: 15.0, bottom: 15.0),
                     ),
                     onPressed: () {
-                      Navigator.pushNamed(
-                          context, ContainerDetails.routeName);
+                      Navigator.pushNamed(context, CraniContainerDetails.routeName);
                     },
                     child: const Text(
                       'NEW',
@@ -67,20 +67,19 @@ class _SurveiState extends State<Survei> {
                       style: TextButton.styleFrom(
                         textStyle: const TextStyle(fontSize: 35),
                         fixedSize: Size(400, 100),
-                        backgroundColor: Colors.blue,
                         shape: ContinuousRectangleBorder(),
+                        backgroundColor: Colors.blue,
                         padding: EdgeInsets.only(
                             left: 40.0, right: 40.0, top: 15.0, bottom: 15.0),
                       ),
-                      onPressed: () {
-                        Navigator.pushNamed(context, SurveiList.routeName);
+                      onPressed: (){
+                        Navigator.pushNamed(context, CraniList.routeName);
                       },
                       child: const Text(
                         'LIST',
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 35,
-                          fontWeight: FontWeight.bold
+                          fontWeight: FontWeight.bold,
                         ),
                       )),
                 ),

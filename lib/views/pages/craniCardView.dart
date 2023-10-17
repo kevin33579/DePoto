@@ -1,24 +1,24 @@
-part of '../pages.dart';
+part of 'pages.dart';
 
-class CardView extends StatefulWidget {
+class CraniCardView extends StatefulWidget {
   String date;
-  CardView({
+  CraniCardView({
     required this.date
-});
+  });
 
   @override
-  State<CardView> createState() => _CardViewState();
+  State<CraniCardView> createState() => _CraniCardViewState();
 }
 
-class _CardViewState extends State<CardView> {
+class _CraniCardViewState extends State<CraniCardView> {
   @override
   Widget build(BuildContext context) {
-    final userStream = FirebaseFirestore.instance.collection('DKM/IN/${widget.date}').snapshots();
+    final userStream = FirebaseFirestore.instance.collection('DKM/OUT/${widget.date}').snapshots();
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
         title: Text(
-            widget.date,
+          widget.date,
           style: TextStyle(
             fontSize: 30,
             color: Colors.white,
@@ -51,10 +51,6 @@ class _CardViewState extends State<CardView> {
 
           final documents = snapshot.data?.docs;
 
-          // final folderNames = dataList?.map((document) {
-          //   return document.id; // Ganti 'folderName' dengan nama field yang sesuai
-          // }).toList();
-
 
           return ListView.builder(
             itemCount: documents?.length,
@@ -67,14 +63,14 @@ class _CardViewState extends State<CardView> {
                   title: Text(
                     folderName!,
                     style: TextStyle(
-                      fontSize: 30,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w700
+                        fontSize: 30,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700
                     ),
                   ),
                   onTap: (){
                     Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => Details(folderPath: document!.reference.path)));
+                        MaterialPageRoute(builder: (context) => CraniDetails(folderPath: document!.reference.path,date: widget.date,)));
                   },
                   tileColor: Colors.blue,
                 ),
